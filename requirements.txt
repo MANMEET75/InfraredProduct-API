@@ -1,0 +1,14 @@
+fastapi[all]
+uvicorn
+pandas
+matplotlib
+seaborn
+plotly
+scikit-learn
+scipy
+statsmodels
+python-pptx
+streamlit
+tensorflow
+# -e .
+
