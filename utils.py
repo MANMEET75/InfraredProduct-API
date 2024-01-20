@@ -7,10 +7,13 @@ from keras.preprocessing.sequence import TimeseriesGenerator
 from keras.models import Sequential
 from keras.layers import Dense
 from io import StringIO
+from scipy.spatial.distance import mahalanobis
 import os
+from sklearn.cluster import DBSCAN
 from urllib.parse import quote
 from keras.layers import LSTM
 from scipy import stats
+from sklearn.covariance import EllipticEnvelope
 from sklearn.linear_model import SGDOneClassSVM
 from sklearn.neighbors import LocalOutlierFactor
 import plotly.graph_objects as go
@@ -40,7 +43,7 @@ import base64
 from urllib.parse import quote
 
 
-def delayed_file_delete(file_path, delay=600):
+def delayed_file_delete(file_path, delay=60):
     """
     Deletes the specified file after a delay.
     
@@ -54,6 +57,35 @@ def delayed_file_delete(file_path, delay=600):
     except OSError as e:
         print(f"Error: {e.filename} - {e.strerror}")
 
+# working of benford's third law over here
+def extract_first_three_digits(number):
+    if isinstance(number, (int, float)):
+        first_three = int(str(int(number))[:3])
+        if 100 <= first_three <= 999:
+            return first_three
+    return None
+
+
+# working of benford's second law over here
+def extract_first_two_digits(number):
+    if isinstance(number, (int, float)):
+        first_two = int(str(int(number))[:2])
+        if 10 <= first_two <= 99:
+            return first_two
+    return None
+
+def extract_first_digit(number):
+    if isinstance(number, (int, float)):
+        number_str = str(number)
+        if '.' in number_str:  # Check for decimal point
+            number_str = number_str.split('.')[0]  # Remove decimal part
+        if number_str[0] == '-' and len(number_str) > 1:  # Check for negative sign
+            first_digit = int(number_str[1])
+        else:
+            first_digit = int(number_str[0])
+        if 1 <= first_digit <= 9:
+            return first_digit
+    return None
 
 def z_score_anomaly_detection(data, column, threshold):
     z_scores = stats.zscore(data[column])
@@ -122,20 +154,22 @@ def adf_test(series,title=''):
 
 
 
+# over here we have the fuction for isolation forest
 def apply_anomaly_detection_IsolationForest(data):
-        # Make a copy of the data
-        data_copy = data.copy()
+    # Make a copy of the data
+    data_copy = data.copy()
 
-        # Fit the Isolation Forest model
-        isolation_forest = IsolationForest(contamination=0.03, random_state=42)
-        isolation_forest.fit(data_copy)
+    # Fit the Isolation Forest model
+    # if the contamination parameter is too high it may lead to the algorithm detecting more anomalies
+    isolation_forest = IsolationForest(contamination=0.05, random_state=42)
+    isolation_forest.fit(data_copy)
 
-        # Predict the anomaly labels
-        anomaly_labels = isolation_forest.predict(data_copy)
+    # Predict the anomaly labels
+    anomaly_labels = isolation_forest.predict(data_copy)
 
-        # Create a new column in the original DataFrame for the anomaly indicator
-        data['Anomaly'] = np.where(anomaly_labels == -1, 1, 0)
-        return data
+    # Create a new column in the original DataFrame for the anomaly indicator
+    data['Anomaly_IF'] = np.where(anomaly_labels == -1, 1, 0)
+    return data
 
 
 def apply_anomaly_detection_LocalOutlierFactor(data, neighbors=200):
@@ -245,7 +279,63 @@ def apply_anomaly_detection_autoencoder(data):
         return data_with_reconstruction_error
 
     
+def apply_anomaly_detection_dbscan(data, eps, min_samples):
+    # Standardize the data
+    scaler = StandardScaler()
+    standardized_data = scaler.fit_transform(data)
 
+    # Apply DBSCAN clustering
+    dbscan = DBSCAN(eps=eps, min_samples=min_samples)
+    data['Anomaly_DBSCAN'] = dbscan.fit_predict(standardized_data)
+
+    # Anomalies are labeled as -1, convert to 1 for visualization
+    data['Anomaly_DBSCAN'] = (data['Anomaly_DBSCAN'] == -1).astype(int)
+
+    return data
+
+def apply_anomaly_detection_EllipticEnvelope(data):
+    # Standardize the data
+    # scaler = StandardScaler()
+    # standardized_data = scaler.fit_transform(data)
+
+    # Apply EllipticEnvelope
+    ee = EllipticEnvelope(contamination=0.1)  # Set the contamination parameter as needed
+    ee.fit(data)
+
+    y_pred = ee.predict(data)
+    data['Anomaly_EllipticEnvelope'] = np.where(y_pred == -1, 1, 0)
+
+    # anomalies = ee.fit_predict(standardized_data)
+
+    
+
+
+    # Add anomaly column to the original DataFrame
+    # data['Anomaly_EllipticEnvelope'] = anomalies
+
+    return data
+
+def apply_anomaly_detection_Mahalanobis(data):
+        # Assuming 'data' is a pandas DataFrame with numerical columns
+        # You may need to preprocess and select appropriate features for Mahalanobis distances
+
+        # Calculate the mean and covariance matrix of the data
+        data_mean = data.mean()
+        data_cov = data.cov()
+
+        # Calculate the inverse of the covariance matrix
+        data_cov_inv = np.linalg.inv(data_cov)
+
+        # Calculate Mahalanobis distances for each data point
+        mahalanobis_distances = data.apply(lambda row: mahalanobis(row, data_mean, data_cov_inv), axis=1)
+
+        # Set a threshold to identify anomalies (you can adjust this threshold based on your dataset)
+        threshold = mahalanobis_distances.mean() + 2 * mahalanobis_distances.std()
+
+        # Create a new column 'Anomaly' to indicate anomalies (1 for anomalies, 0 for inliers)
+        data['Anomaly_RC'] = (mahalanobis_distances > threshold).astype(int)
+
+        return data
 
 def apply_anomaly_detection_SGDOCSVM(data):
         # Copy the original data to avoid modifying the original dataframe
@@ -257,6 +347,7 @@ def apply_anomaly_detection_SGDOCSVM(data):
         data_with_anomalies['Anomaly'] = np.where(y_pred == -1, 1, 0)
 
         return data_with_anomalies
+
 
 
 
