@@ -17,7 +17,7 @@ def read_root():
 async def zscore_anomaly(file: UploadFile, column: str):
     file_extension = file.filename.split(".")[-1]
     if file_extension == "csv":
-        data = pd.read_csv(BytesIO(await file.read()))
+        data = pd.read_csv(BytesIO(await file.read()), encoding='ISO-8859-1')
     elif file_extension in ["xlsx", "XLSX"]:
         data = pd.read_excel(BytesIO(await file.read()))
     else:
@@ -95,7 +95,7 @@ async def zscore_anomaly(file: UploadFile, column: str):
 async def boxplot_anomaly(file: UploadFile, column: str):
     file_extension = file.filename.split(".")[-1]
     if file_extension == "csv":
-        data = pd.read_csv(BytesIO(await file.read()))
+        data = pd.read_csv(BytesIO(await file.read()), encoding='ISO-8859-1')
     elif file_extension in ["xlsx", "XLSX"]:
         data = pd.read_excel(BytesIO(await file.read()))
     else:
@@ -213,7 +213,7 @@ async def boxplot_anomaly(file: UploadFile, column: str):
 async def pdf_anomaly(file: UploadFile, column: str):
     file_extension = file.filename.split(".")[-1]
     if file_extension == "csv":
-        data = pd.read_csv(BytesIO(await file.read()))
+        data = pd.read_csv(BytesIO(await file.read()), encoding='ISO-8859-1')
     elif file_extension in ["xlsx", "XLSX"]:
         data = pd.read_excel(BytesIO(await file.read()))
     else:
@@ -323,7 +323,7 @@ async def pdf_anomaly(file: UploadFile, column: str):
 # async def rsf_anomaly(file: UploadFile):
 #     file_extension = file.filename.split(".")[-1]
 #     if file_extension == "csv":
-#         data = pd.read_csv(BytesIO(await file.read()))
+#         data = pd.read_csv(BytesIO(await file.read()), encoding='ISO-8859-1')
 #     elif file_extension in ["xlsx", "XLSX"]:
 #         data = pd.read_excel(BytesIO(await file.read()))
 #     else:
@@ -917,7 +917,7 @@ async def benfordThirdLaw_anomaly(file: UploadFile, column: str):
 async def IsolationForest_anomaly(file: UploadFile, xcolumn: str,ycolumn: str):
     file_extension = file.filename.split(".")[-1]
     if file_extension == "csv":
-        data = pd.read_csv(BytesIO(await file.read()))
+        data = pd.read_csv(BytesIO(await file.read()), encoding='ISO-8859-1')
     elif file_extension in ["xlsx", "XLSX"]:
         data = pd.read_excel(BytesIO(await file.read()))
     else:
@@ -1050,7 +1050,7 @@ async def IsolationForest_anomaly(file: UploadFile, xcolumn: str,ycolumn: str):
 async def kernelDensityEstimation_anomaly(file: UploadFile, column: str):
     file_extension = file.filename.split(".")[-1]
     if file_extension == "csv":
-        data = pd.read_csv(BytesIO(await file.read()))
+        data = pd.read_csv(BytesIO(await file.read()), encoding='ISO-8859-1')
     elif file_extension in ["xlsx", "XLSX"]:
         data = pd.read_excel(BytesIO(await file.read()))
     else:
@@ -1212,7 +1212,7 @@ async def kernelDensityEstimation_anomaly(file: UploadFile, column: str):
 async def LocalOutlierFactor_anomaly(file: UploadFile, xcolumn: str,ycolumn: str):
     file_extension = file.filename.split(".")[-1]
     if file_extension == "csv":
-        data = pd.read_csv(BytesIO(await file.read()))
+        data = pd.read_csv(BytesIO(await file.read()), encoding='ISO-8859-1')
     elif file_extension in ["xlsx", "XLSX"]:
         data = pd.read_excel(BytesIO(await file.read()))
     else:
@@ -1352,7 +1352,7 @@ async def LocalOutlierFactor_anomaly(file: UploadFile, xcolumn: str,ycolumn: str
 # async def OneClassSVM_anomaly(file: UploadFile, xcolumn: str,ycolumn: str):
 #     file_extension = file.filename.split(".")[-1]
 #     if file_extension == "csv":
-#         data = pd.read_csv(BytesIO(await file.read()))
+#         data = pd.read_csv(BytesIO(await file.read()), encoding='ISO-8859-1')
 #     elif file_extension in ["xlsx", "XLSX"]:
 #         data = pd.read_excel(BytesIO(await file.read()))
 #     else:
@@ -1461,7 +1461,7 @@ async def LocalOutlierFactor_anomaly(file: UploadFile, xcolumn: str,ycolumn: str
 async def OneClassSVMSGD_anomaly(file: UploadFile, xcolumn: str,ycolumn: str):
     file_extension = file.filename.split(".")[-1]
     if file_extension == "csv":
-        data = pd.read_csv(BytesIO(await file.read()))
+        data = pd.read_csv(BytesIO(await file.read()), encoding='ISO-8859-1')
     elif file_extension in ["xlsx", "XLSX"]:
         data = pd.read_excel(BytesIO(await file.read()))
     else:
@@ -1596,7 +1596,7 @@ async def OneClassSVMSGD_anomaly(file: UploadFile, xcolumn: str,ycolumn: str):
 async def DBSCAN_anomaly(file: UploadFile, xcolumn: str,ycolumn: str):
     file_extension = file.filename.split(".")[-1]
     if file_extension == "csv":
-        data = pd.read_csv(BytesIO(await file.read()))
+        data = pd.read_csv(BytesIO(await file.read()), encoding='ISO-8859-1')
     elif file_extension in ["xlsx", "XLSX"]:
         data = pd.read_excel(BytesIO(await file.read()))
     else:
@@ -1738,7 +1738,7 @@ async def DBSCAN_anomaly(file: UploadFile, xcolumn: str,ycolumn: str):
 async def EllipticEnvelope_anomaly(file: UploadFile, xcolumn: str,ycolumn: str):
     file_extension = file.filename.split(".")[-1]
     if file_extension == "csv":
-        data = pd.read_csv(BytesIO(await file.read()))
+        data = pd.read_csv(BytesIO(await file.read()), encoding='ISO-8859-1')
     elif file_extension in ["xlsx", "XLSX"]:
         data = pd.read_excel(BytesIO(await file.read()))
     else:
@@ -1874,7 +1874,7 @@ async def EllipticEnvelope_anomaly(file: UploadFile, xcolumn: str,ycolumn: str):
 async def RobustCovariance_anomaly(file: UploadFile, xcolumn: str,ycolumn: str):
     file_extension = file.filename.split(".")[-1]
     if file_extension == "csv":
-        data = pd.read_csv(BytesIO(await file.read()))
+        data = pd.read_csv(BytesIO(await file.read()), encoding='ISO-8859-1')
     elif file_extension in ["xlsx", "XLSX"]:
         data = pd.read_excel(BytesIO(await file.read()))
     else:
