@@ -48,5 +48,8 @@ uvicorn main:app --host 0.0.0.0 --reload
 nohup uvicorn main:app --host 0.0.0.0 --reload
 ```
 
+<img src="lifecycle1.gif">
+<img src="ilogo.png" width="200">
+
 Note: fastapi runs on this port: 8000
 #### Enjoy Coding!
